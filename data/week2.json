@@ -1,0 +1,44 @@
+{
+  "employee": { "id": "EMP-042", "name": "Alex Gagnon", "team": "Fictitious Squad" },
+  "week": { "start": "2026-11-23", "end": "2026-11-27", "expectedHours": 40, "dailyBreakMinutes": 20 },
+  "categories": [
+    { "code": "PROJ", "name": "Project" },
+    { "code": "MGMT", "name": "Management" },
+    { "code": "ADMIN", "name": "Administration" },
+    { "code": "5843", "name": "Training" }
+  ],
+  "workItems": [
+    { "id": 1203, "title": "Refactor notification service", "type": "Task" },
+    { "id": 1204, "title": "Parts search: sort by price", "type": "User Story" },
+    { "id": 1205, "title": "Login page times out too early", "type": "Bug" }
+  ],
+  "meetings": [
+    { "id": "M12", "date": "2026-11-23", "start": "09:00", "end": "09:15", "title": "Daily stand-up", "source": "Teams" },
+    { "id": "M13", "date": "2026-11-23", "start": "11:30", "end": "13:00", "title": "Client demo prep", "source": "Teams" },
+    { "id": "M14", "date": "2026-11-24", "start": "09:00", "end": "09:15", "title": "Daily stand-up", "source": "Teams" },
+    { "id": "M15", "date": "2026-11-24", "start": "13:00", "end": "17:00", "title": "Cloud security workshop", "source": "Teams", "trainingCode": "5843" },
+    { "id": "M16", "date": "2026-11-25", "start": "09:00", "end": "09:15", "title": "Daily stand-up", "source": "Teams" },
+    { "id": "M17", "date": "2026-11-25", "start": "10:00", "end": "10:30", "title": "Backlog refinement", "source": "Teams" },
+    { "id": "M18", "date": "2026-11-25", "start": "10:15", "end": "11:00", "title": "Incident follow-up", "source": "Teams" },
+    { "id": "M19", "date": "2026-11-26", "start": "09:00", "end": "09:15", "title": "Daily stand-up", "source": "Teams" },
+    { "id": "M20", "date": "2026-11-26", "start": "15:30", "end": "16:00", "title": "Timesheet and admin", "source": "Calendar" },
+    { "id": "M21", "date": "2026-11-27", "start": "09:00", "end": "17:00", "title": "Team offsite planning", "source": "Calendar", "cancelled": true }
+  ],
+  "commits": [
+    { "sha": "b1c2d3e", "date": "2026-11-23", "time": "10:20", "workItemId": 1203, "message": "Add unit tests for notifier" },
+    { "sha": "c4d5e6f", "date": "2026-11-23", "time": "15:45", "workItemId": 1204, "message": "Sort parts by price" },
+    { "sha": "d7e8f90", "date": "2026-11-24", "time": "11:10", "workItemId": 1204, "message": "Add price sort tests" },
+    { "sha": "e0f1a2b", "date": "2026-11-25", "time": "14:30", "workItemId": 1205, "message": "Extend session timeout" },
+    { "sha": "f3a4b5c", "date": "2026-11-25", "time": "16:05", "workItemId": null, "message": "Fix typo in README" },
+    { "sha": "a6b7c8d", "date": "2026-11-26", "time": "13:40", "workItemId": 1205, "message": "Refresh token before expiry" },
+    { "sha": "b9c0d1e", "date": "2026-11-28", "time": "10:15", "workItemId": 1205, "message": "Weekend hotfix for token refresh" }
+  ],
+  "pullRequests": [
+    { "id": 5503, "workItemId": 1203, "title": "Notification service refactor", "created": "2026-11-20T11:30", "merged": "2026-11-23T14:00" },
+    { "id": 5504, "workItemId": 1204, "title": "Parts sort by price", "created": "2026-11-24T11:30", "merged": "2026-11-25T09:30" },
+    { "id": 5505, "workItemId": 1205, "title": "Session timeout fix", "created": "2026-11-26T14:00", "merged": null }
+  ],
+  "absences": [
+    { "date": "2026-11-27", "type": "Vacation", "hours": 8, "period": "full day" }
+  ]
+}
