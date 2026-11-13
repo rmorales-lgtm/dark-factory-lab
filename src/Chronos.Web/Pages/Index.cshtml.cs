@@ -33,6 +33,7 @@ public class IndexModel : PageModel
     public WeekProposal Proposal { get; private set; } = new([], []);
     public IReadOnlyList<TimeEntry> Entries { get; private set; } = [];
     public WeekKpis? Kpis { get; private set; }
+    public IReadOnlyList<string> Violations { get; private set; } = [];
     public IReadOnlyList<WorkItemSummary> WorkItems { get; private set; } = [];
 
     /// <summary>True when the controls that change entries are shown (status Draft or Rejected).</summary>
@@ -129,6 +130,7 @@ public class IndexModel : PageModel
         Proposal = ProposalBuilder.Build(data);
         Entries = _weeks.GetEntries(data);
         Kpis = KpiCalculator.Calculate(data, Entries);
+        Violations = WeekValidator.Validate(data, Entries);
         WorkItems = WorkItemSummary.Build(data, Entries);
         CanEdit = _weeks.CheckEditable(SelectedWeek) is null;
         return true;

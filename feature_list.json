@@ -62,25 +62,25 @@
       "id": "T2-AC3", "ticket": 2, "priority": 2,
       "description": "'Violations' panel with exact messages: Overlap (M4 and M5 on 2026-11-17; M17 and M18 on 2026-11-25), Break (no 20-minute break on 2026-11-23), Target (Total 36:40 does not match target 36:00; Total 33:15 does not match target 32:00), Training code (M8 changed to MGMT -> 'Training must use code 5843: M8 on 2026-11-19'), Category ('Missing category: <start>-<end> on <date>').",
       "verification": ["page test per week greps exact messages", "unit test per violation type"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC4", "ticket": 2, "priority": 2,
       "description": "KPI panel shows violation count: 2 for week 1 proposal, 3 for week 2 proposal. All KPIs recalculated from saved entries.",
       "verification": ["page tests for both weeks; edit then KPIs change"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC5", "ticket": 2, "priority": 2,
       "description": "A week with no violation shows 'Week is valid'. Scenario: week 1, M5 -> 15:00-15:30 and 2026-11-20 entry 12:20-15:00 -> 12:30-15:00 gives worked 36:00 / 36:00, 0 violations, 'Week is valid'.",
       "verification": ["integration test applying the 2 edits and asserting the HTML"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC6", "ticket": 2, "priority": 2,
       "description": "Each violation type has its own domain unit test (no web); one page test shows the messages of each week.",
       "verification": ["5 unit tests (overlap, break, target, training, category)", "2 page tests"],
-      "passes": false
+      "passes": true
     },
     { "id": "T3-AC1", "ticket": 3, "priority": 3, "description": "Every page shows 'Role: Employee' by default; POST /Role (antiforgery) with buttons Employee and Manager; after Manager every page shows 'Role: Manager', also after reload; any other role value refused, role unchanged.", "verification": ["page tests: default, switch, reload, invalid value"], "passes": false },
     { "id": "T3-AC2", "ticket": 3, "priority": 3, "description": "Week page shows 'Status: Draft' for both weeks at start; status is per week, independent, and survives an app restart.", "verification": ["page test per week", "persistence test with a new factory on the same database"], "passes": false },

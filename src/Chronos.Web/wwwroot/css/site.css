@@ -201,3 +201,7 @@ th { font-size: 0.85rem; color: var(--muted); border-top: 0; font-weight: 600; }
 .btn { font: inherit; padding: 0.35rem 0.8rem; border: 1px solid var(--brand); border-radius: 4px; background: var(--brand); color: #fff; cursor: pointer; }
 .btn-danger { background: var(--surface); color: #9b1c1c; border-color: #9b1c1c; }
 .btn-quiet { background: var(--surface); color: var(--brand); }
+
+.violations .valid { margin: 0; font-weight: 700; color: #1b6b3a; }
+.viol-list { margin: 0; padding: 0; list-style: none; }
+.viol { padding: 0.3rem 0 0.3rem 0.6rem; border-left: 4px solid #b3261e; margin: 0.3rem 0; font-weight: 600; }

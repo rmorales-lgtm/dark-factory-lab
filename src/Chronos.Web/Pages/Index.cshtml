@@ -39,7 +39,22 @@ else
 
     <div class="layout">
         <div class="main-col">
-            <section id="violations" class="panel" hidden aria-label="Violations"></section>
+            <section id="violations" class="panel violations" aria-labelledby="viol-h">
+                <h2 id="viol-h">Violations</h2>
+                @if (Model.Violations.Count == 0)
+                {
+                    <p class="valid">Week is valid</p>
+                }
+                else
+                {
+                    <ul class="plain viol-list">
+                        @foreach (var v in Model.Violations)
+                        {
+                            <li class="viol">@v</li>
+                        }
+                    </ul>
+                }
+            </section>
 
             @{ var rowNo = 0; }
             @foreach (var day in Model.Days)
@@ -190,6 +205,7 @@ else
                 <dl class="stats">
                     <div><dt>Project share</dt><dd>@kpis.ProjectSharePercent%</dd></div>
                     <div><dt>Meeting time</dt><dd>@IndexModel.Hmm(kpis.MeetingMinutes)</dd></div>
+                    <div><dt>Violations:</dt><dd>@Model.Violations.Count</dd></div>
                 </dl>
                 <h3>Time per category</h3>
                 <dl class="stats">
