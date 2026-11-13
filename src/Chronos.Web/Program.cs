@@ -21,6 +21,8 @@ builder.Services.AddSingleton(sp =>
     var env = sp.GetRequiredService<IWebHostEnvironment>();
     return new ChronosPaths(ResolveDataDirectory(config["Chronos:DataDirectory"], env.ContentRootPath));
 });
+builder.Services.AddSingleton<Chronos.Web.Domain.IWeekDataSource>(sp =>
+    new Chronos.Web.Domain.FileWeekDataSource(sp.GetRequiredService<ChronosPaths>()));
 
 var app = builder.Build();
 

@@ -1,23 +1,48 @@
 :root {
+  --ink: #1b1f24;
+  --muted: #4d5865;
+  --paper: #f3f5f8;
+  --surface: #ffffff;
+  --line: #cfd6df;
+  --brand: #14304a;
+  --accent: #1a6fd4;
+  --warn-bg: #fff1cc;
+  --warn-ink: #6b4500;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: #1b1f24;
-  background: #f6f7f9;
+  color: var(--ink);
+  background: var(--paper);
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   line-height: 1.5;
+  background: var(--paper);
 }
 
 .site-header {
-  background: #14304a;
+  background: var(--brand);
   padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .brand {
   color: #fff;
   font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
   text-decoration: none;
+}
+
+.role {
+  margin: 0;
+  color: #dbe6f2;
+  font-size: 0.95rem;
 }
 
 a:focus-visible,
@@ -25,12 +50,139 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #1a6fd4;
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
+.site-header a:focus-visible { outline-color: #fff; }
+
 .container {
-  max-width: 72rem;
+  max-width: 76rem;
   margin: 0 auto;
   padding: 1rem;
 }
+
+h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+h2 { font-size: 1.1rem; margin: 0; }
+h3 { font-size: 0.95rem; margin: 1rem 0 0.25rem; color: var(--muted); }
+
+.week-picker {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.week-picker select,
+.week-picker button {
+  font: inherit;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.week-picker button {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  cursor: pointer;
+}
+
+.week-head { margin-bottom: 1rem; }
+
+.meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 0;
+  color: var(--muted);
+}
+
+.notice {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 60rem) {
+  .layout { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); align-items: start; }
+}
+
+.day,
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.day-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.dow { color: var(--muted); font-weight: 400; }
+.day-total { margin: 0; color: var(--muted); }
+.day-total strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.35rem 0.5rem; border-top: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.85rem; color: var(--muted); border-top: 0; font-weight: 600; }
+
+.src-id { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.cat {
+  display: inline-block;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #e3edf8;
+  color: #0d3a6b;
+}
+.cat-absence { background: #e8e8ee; color: #33333f; }
+.cat-none { background: var(--warn-bg); color: var(--warn-ink); border: 1px dashed var(--warn-ink); }
+
+.big { font-size: 1rem; margin: 0.5rem 0; }
+.big strong { display: block; font-size: 1.75rem; font-variant-numeric: tabular-nums; }
+
+.stats { margin: 0; }
+.stats > div { display: flex; justify-content: space-between; padding: 0.2rem 0; border-top: 1px solid var(--line); }
+.stats dt { color: var(--muted); }
+.stats dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.plain { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+.plain > li { padding: 0.5rem 0; border-top: 1px solid var(--line); }
+.plain p { margin: 0; }
+.prs { margin-top: 0.25rem; padding-left: 0.75rem; }
+.prs > li { border-top: 0; padding: 0.1rem 0; }
+
+.sub, .empty { color: var(--muted); font-size: 0.9rem; }
+
+.state {
+  font-weight: 600;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+  font-size: 0.85rem;
+}
+.state-merged { color: #14602b; }
+.state-open { color: #8a4b00; }

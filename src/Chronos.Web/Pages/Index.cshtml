@@ -1,7 +1,166 @@
 ﻿@page
+@using System.Globalization
+@using Chronos.Web.Domain
 @model IndexModel
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Week";
+    var inv = CultureInfo.InvariantCulture;
 }
 
-<h1>Chronos</h1>
+<form method="get" action="/" class="week-picker">
+    <label for="week">Week starting</label>
+    <select id="week" name="week">
+        @foreach (var w in Model.AvailableWeeks)
+        {
+            <option value="@w" selected="@(w == Model.SelectedWeek && !Model.WeekNotFound)">@w</option>
+        }
+    </select>
+    <button type="submit">Show week</button>
+</form>
+
+@if (Model.WeekNotFound || Model.Week is null || Model.Kpis is null)
+{
+    <section class="notice" aria-labelledby="nf-h">
+        <h1 id="nf-h">Week not found</h1>
+        <p>Choose one of the weeks in the selector above.</p>
+    </section>
+}
+else
+{
+    var week = Model.Week;
+    var kpis = Model.Kpis;
+    <header class="week-head">
+        <h1>@week.Employee.Name</h1>
+        <p class="meta">
+            <span>Team: @week.Employee.Team</span>
+            <span>Week: @week.Week.Start to @week.Week.End</span>
+        </p>
+    </header>
+
+    <div class="layout">
+        <div class="main-col">
+            <section id="violations" class="panel" hidden aria-label="Violations"></section>
+
+            @foreach (var day in Model.Days)
+            {
+                <section class="day" aria-labelledby="day-@day.Key.ToString("yyyy-MM-dd")">
+                    <div class="day-head">
+                        <h2 id="day-@day.Key.ToString("yyyy-MM-dd")">@day.Key.ToString("yyyy-MM-dd") <span class="dow">@day.Key.ToString("dddd", inv)</span></h2>
+                        <p class="day-total">Worked <strong>@IndexModel.Hmm(kpis.WorkedByDay.GetValueOrDefault(day.Key))</strong></p>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Start</th>
+                                    <th scope="col">End</th>
+                                    <th scope="col">Duration</th>
+                                    <th scope="col">Source</th>
+                                    <th scope="col">Category</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var e in day)
+                                {
+                                    <tr class="entry" data-key="@e.Key">
+                                        <td>@e.Start.ToString("HH:mm", inv)</td>
+                                        <td>@e.End.ToString("HH:mm", inv)</td>
+                                        <td>@IndexModel.Hmm(e.Minutes)</td>
+                                        <td>
+                                            @if (e.SourceKind == SourceKind.Absence)
+                                            {
+                                                <span class="src-title">@e.SourceTitle</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="src-id">@e.SourceId</span> <span class="src-title">@e.SourceTitle</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (e.Category is null)
+                                            {
+                                                <span class="cat cat-none">none</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="cat cat-@e.Category.ToLowerInvariant()">@e.Category</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            }
+        </div>
+
+        <aside class="side-col">
+            <section class="panel kpi" aria-labelledby="kpi-h">
+                <h2 id="kpi-h">KPIs</h2>
+                <p class="big">Worked / target <strong>@IndexModel.Hmm(kpis.WorkedMinutes) / @IndexModel.Hmm(kpis.TargetMinutes)</strong></p>
+                <dl class="stats">
+                    <div><dt>Project share</dt><dd>@kpis.ProjectSharePercent%</dd></div>
+                    <div><dt>Meeting time</dt><dd>@IndexModel.Hmm(kpis.MeetingMinutes)</dd></div>
+                </dl>
+                <h3>Time per category</h3>
+                <dl class="stats">
+                    @foreach (var c in KpiCalculator.CategoryOrder)
+                    {
+                        <div><dt>@c</dt><dd>@IndexModel.Hmm(kpis.MinutesByCategory.GetValueOrDefault(c))</dd></div>
+                    }
+                </dl>
+            </section>
+
+            <section class="panel" aria-labelledby="wi-h">
+                <h2 id="wi-h">Work items</h2>
+                @if (Model.WorkItems.Count == 0)
+                {
+                    <p class="empty">No work item has time this week.</p>
+                }
+                else
+                {
+                    <ul class="plain">
+                        @foreach (var wi in Model.WorkItems)
+                        {
+                            <li class="wi">
+                                <p><span class="src-id">@wi.Id</span> <span>@wi.Title</span></p>
+                                <p class="sub">Type: @wi.Type, PROJ time: <strong>@IndexModel.Hmm(wi.ProjMinutes)</strong></p>
+                                @if (wi.PullRequests.Count > 0)
+                                {
+                                    <ul class="plain prs">
+                                        @foreach (var pr in wi.PullRequests)
+                                        {
+                                            <li>PR <span class="src-id">@pr.Id</span> <span>@pr.Title</span> <span class="state state-@pr.State">@pr.State</span></li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            <section class="panel" aria-labelledby="ign-h">
+                <h2 id="ign-h">Ignored activity</h2>
+                @if (Model.Proposal.IgnoredCommits.Count == 0)
+                {
+                    <p class="empty">No commits were ignored.</p>
+                }
+                else
+                {
+                    <ul class="plain">
+                        @foreach (var c in Model.Proposal.IgnoredCommits)
+                        {
+                            <li class="ignored">
+                                <p><span class="src-id">@c.Sha</span> <span class="sub">@c.Date</span></p>
+                                <p>@c.Message</p>
+                                <p class="sub">Reason: <strong>@c.Reason</strong></p>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </aside>
+    </div>
+}

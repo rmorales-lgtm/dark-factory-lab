@@ -14,37 +14,37 @@
       "id": "T1-AC1", "ticket": 1, "priority": 1,
       "description": "GET / returns 200 and shows week 1; week selector lists 2026-11-16 and 2026-11-23; ?week=2026-11-23 shows week 2; ?week=2020-01-06 shows 'Week not found', never a 500.",
       "verification": ["page tests for the 3 URLs (status + HTML snippet)", "curl http://localhost:5080/?week=2020-01-06 -> 'Week not found'"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T1-AC2", "ticket": 1, "priority": 1,
       "description": "Page shows employee name (Alex Gagnon), team, week dates; one section per day with entries in time order; each entry shows start, end, duration, source, category.",
       "verification": ["page test greps name, team, dates, a day section, an entry row"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T1-AC3", "ticket": 1, "priority": 1,
       "description": "Both weeks match the Reference proposal exactly (entries, categories, worked per day, per category, week total; rules R1-R6). Domain unit tests for both weeks + one page test per week.",
       "verification": ["domain unit tests week 1 and week 2 (no web)", "one page test per week", "week 1 worked 36:40, week 2 worked 33:15"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T1-AC4", "ticket": 1, "priority": 1,
       "description": "Week 2 has no entry for M21 and no time from commits f3a4b5c (no work item) and b9c0d1e (2026-11-28). 'Ignored activity' section lists both with reason 'no work item' / 'outside the week'.",
       "verification": ["unit test: no M21 entry", "page test: both commits + both reasons in HTML"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T1-AC5", "ticket": 1, "priority": 1,
       "description": "KPI panel: time per category; worked vs target '36:40 / 36:00' (w1) and '33:15 / 32:00' (w2); Project share '78%' (w1) '75%' (w2); meeting time (MGMT+ADMIN+5843) '8:15' for both weeks.",
       "verification": ["page tests grep each KPI value for both weeks"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T1-AC6", "ticket": 1, "priority": 2,
       "description": "'Work items' section lists each work item with time this week (id, title, type, PROJ time) and its pull requests with state merged/open. PR 5503 appears once per week: open in week 1, merged in week 2.",
       "verification": ["page test: 5503 once per week with right state"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC1", "ticket": 2, "priority": 2,
