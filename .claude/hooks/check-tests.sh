@@ -10,6 +10,8 @@ ATTEMPTS=$(cat "$COUNTER" 2>/dev/null || echo 0)
 if [ "$ATTEMPTS" -ge 3 ]; then exit 0; fi   # cap reached: let it stop
 
 cd "$CLAUDE_PROJECT_DIR"
+# No solution yet (project not created): nothing to test
+if ! ls ./*.sln ./*.slnx >/dev/null 2>&1; then exit 0; fi
 if ! dotnet test --nologo > /dev/null 2>&1; then
   echo $((ATTEMPTS + 1)) > "$COUNTER"
   echo "dotnet test is failing. Run 'dotnet test', read the errors and fix the code. Do not disable any test and do not add [Skip]." >&2

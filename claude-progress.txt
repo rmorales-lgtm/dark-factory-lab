@@ -1,0 +1,31 @@
+# Mission Chronos - progress log
+# Read this file, feature_list.json and `git log --oneline -20` at the START of every session.
+# Append a new entry at the END of every session. Never rewrite earlier entries.
+# Work on ONE feature at a time, leave the app in a working state, commit after each feature.
+
+## Rules for every session
+1. Run ./init.sh first. If the build or tests are broken, fix that before anything else.
+2. Pick the highest-priority feature in feature_list.json with "passes": false (ticket order T1, T2, T3, T4).
+3. Write the test (name prefix T{n}_AC{m}_), then the code. Verify end to end (test + curl), not just by reading code.
+4. Only then flip "passes" to true. Never edit/remove/weaken tests or criteria to get a pass.
+5. data/*.json is read-only. No real system, no secrets.
+6. Update this log and commit (message: the criterion IDs done). A small working product beats a large broken one.
+
+## Current state (update at the end of each session)
+- Date: 2026-11-13
+- Project skeleton: NOT CREATED (no Chronos.sln, src/ or tests/ yet)
+- Criteria passing: 0 / 56 (T1: 0/6, T2: 0/6, T3: 0/10, T4: 0/9, T5: 0/8, T6: 0/7, T7: 0/10). T1-T4 are the minimum, T5-T7 stretch.
+- App last known good run: never
+- Next step: create Chronos.sln, src/Chronos.Web (Razor Pages), tests/Chronos.Tests (xUnit); start with T1-AC3 (domain + unit tests).
+
+## Known issues / open questions
+- Tickets are now one file each in tickets/ (see the index in TICKET.md). Assumptions to confirm with the clients: absences are not exported in the CSV (T5); a Submitted week is read-only (T3).
+- No documented SQLite path override key (needed by tests and evaluator). Proposed: Chronos:DatabasePath.
+- Chronos:DataDirectory has no default value yet.
+- Valid category set (PROJ, MGMT, ADMIN, 5843, ABSENCE) is not stated in TICKET.md.
+- reviewer.md is still a stub (no blocking rules).
+
+## Session log
+### Session 0 - setup (2026-11-13)
+- Tickets 1 and 2 merged into TICKET.md. Harness files created: feature_list.json, claude-progress.txt, init.sh.
+- No application code written yet.

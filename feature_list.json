@@ -1,0 +1,130 @@
+{
+  "_readme": [
+    "Source of truth for what must be built. One entry per acceptance criterion of TICKET.md.",
+    "RULES: the only field you may change is `passes` (false -> true), and only after you SAW the verification succeed (test result or curl output).",
+    "It is unacceptable to remove, reword or reorder entries, or to weaken a test to make a criterion pass.",
+    "Entries for Tickets 3 to 7 are copied from the ticket files listed in TICKET.md. Never invent criteria.",
+    "ID format matches the xUnit prefix: T{ticket}-AC{n} <-> test methods named T{ticket}_AC{n}_*."
+  ],
+  "ticket_order": ["T1", "T2", "T3", "T4", "T5", "T6", "T7"],
+  "minimum_tickets": ["T1", "T2", "T3", "T4"],
+  "stretch_tickets": ["T5", "T6", "T7"],
+  "features": [
+    {
+      "id": "T1-AC1", "ticket": 1, "priority": 1,
+      "description": "GET / returns 200 and shows week 1; week selector lists 2026-11-16 and 2026-11-23; ?week=2026-11-23 shows week 2; ?week=2020-01-06 shows 'Week not found', never a 500.",
+      "verification": ["page tests for the 3 URLs (status + HTML snippet)", "curl http://localhost:5080/?week=2020-01-06 -> 'Week not found'"],
+      "passes": false
+    },
+    {
+      "id": "T1-AC2", "ticket": 1, "priority": 1,
+      "description": "Page shows employee name (Alex Gagnon), team, week dates; one section per day with entries in time order; each entry shows start, end, duration, source, category.",
+      "verification": ["page test greps name, team, dates, a day section, an entry row"],
+      "passes": false
+    },
+    {
+      "id": "T1-AC3", "ticket": 1, "priority": 1,
+      "description": "Both weeks match the Reference proposal exactly (entries, categories, worked per day, per category, week total; rules R1-R6). Domain unit tests for both weeks + one page test per week.",
+      "verification": ["domain unit tests week 1 and week 2 (no web)", "one page test per week", "week 1 worked 36:40, week 2 worked 33:15"],
+      "passes": false
+    },
+    {
+      "id": "T1-AC4", "ticket": 1, "priority": 1,
+      "description": "Week 2 has no entry for M21 and no time from commits f3a4b5c (no work item) and b9c0d1e (2026-11-28). 'Ignored activity' section lists both with reason 'no work item' / 'outside the week'.",
+      "verification": ["unit test: no M21 entry", "page test: both commits + both reasons in HTML"],
+      "passes": false
+    },
+    {
+      "id": "T1-AC5", "ticket": 1, "priority": 1,
+      "description": "KPI panel: time per category; worked vs target '36:40 / 36:00' (w1) and '33:15 / 32:00' (w2); Project share '78%' (w1) '75%' (w2); meeting time (MGMT+ADMIN+5843) '8:15' for both weeks.",
+      "verification": ["page tests grep each KPI value for both weeks"],
+      "passes": false
+    },
+    {
+      "id": "T1-AC6", "ticket": 1, "priority": 2,
+      "description": "'Work items' section lists each work item with time this week (id, title, type, PROJ time) and its pull requests with state merged/open. PR 5503 appears once per week: open in week 1, merged in week 2.",
+      "verification": ["page test: 5503 once per week with right state"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC1", "ticket": 2, "priority": 2,
+      "description": "Employee can edit (start, end, category), delete and add an entry. Saved in SQLite for that week only, persists after reload. 'Reset to proposal' deletes the week's saved changes and shows the proposal again.",
+      "verification": ["integration test: edit, reload, still there; other week untouched", "reset test restores proposal"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC2", "ticket": 2, "priority": 2,
+      "description": "Invalid input refused with a message next to the field and nothing saved: end at/before start, date outside the week, unknown category.",
+      "verification": ["3 negative tests, each asserts message in HTML and no change stored"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC3", "ticket": 2, "priority": 2,
+      "description": "'Violations' panel with exact messages: Overlap (M4 and M5 on 2026-11-17; M17 and M18 on 2026-11-25), Break (no 20-minute break on 2026-11-23), Target (Total 36:40 does not match target 36:00; Total 33:15 does not match target 32:00), Training code (M8 changed to MGMT -> 'Training must use code 5843: M8 on 2026-11-19'), Category ('Missing category: <start>-<end> on <date>').",
+      "verification": ["page test per week greps exact messages", "unit test per violation type"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC4", "ticket": 2, "priority": 2,
+      "description": "KPI panel shows violation count: 2 for week 1 proposal, 3 for week 2 proposal. All KPIs recalculated from saved entries.",
+      "verification": ["page tests for both weeks; edit then KPIs change"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC5", "ticket": 2, "priority": 2,
+      "description": "A week with no violation shows 'Week is valid'. Scenario: week 1, M5 -> 15:00-15:30 and 2026-11-20 entry 12:20-15:00 -> 12:30-15:00 gives worked 36:00 / 36:00, 0 violations, 'Week is valid'.",
+      "verification": ["integration test applying the 2 edits and asserting the HTML"],
+      "passes": false
+    },
+    {
+      "id": "T2-AC6", "ticket": 2, "priority": 2,
+      "description": "Each violation type has its own domain unit test (no web); one page test shows the messages of each week.",
+      "verification": ["5 unit tests (overlap, break, target, training, category)", "2 page tests"],
+      "passes": false
+    },
+    { "id": "T3-AC1", "ticket": 3, "priority": 3, "description": "Every page shows 'Role: Employee' by default; POST /Role (antiforgery) with buttons Employee and Manager; after Manager every page shows 'Role: Manager', also after reload; any other role value refused, role unchanged.", "verification": ["page tests: default, switch, reload, invalid value"], "passes": false },
+    { "id": "T3-AC2", "ticket": 3, "priority": 3, "description": "Week page shows 'Status: Draft' for both weeks at start; status is per week, independent, and survives an app restart.", "verification": ["page test per week", "persistence test with a new factory on the same database"], "passes": false },
+    { "id": "T3-AC3", "ticket": 3, "priority": 3, "description": "Employee sees 'Submit week' on Draft or Rejected and never Approve or Reject; Manager never sees 'Submit week'.", "verification": ["page tests per role and status"], "passes": false },
+    { "id": "T3-AC4", "ticket": 3, "priority": 3, "description": "Submit with violations refused, status stays Draft: 'Cannot submit: 2 violation(s) to fix' (week 1), 'Cannot submit: 3 violation(s) to fix' (week 2).", "verification": ["page tests for both weeks"], "passes": false },
+    { "id": "T3-AC5", "ticket": 3, "priority": 3, "description": "Valid week 1 scenario (T2-AC5 edits): Employee submits, page shows 'Status: Submitted' and history 'Submitted by Employee'.", "verification": ["integration test"], "passes": false },
+    { "id": "T3-AC6", "ticket": 3, "priority": 3, "description": "Manager sees Approve, Reject and a comment field on a Submitted week; Approve gives 'Status: Approved' and history 'Approved by Manager'.", "verification": ["page test"], "passes": false },
+    { "id": "T3-AC7", "ticket": 3, "priority": 3, "description": "Reject without comment refused with 'A comment is required to reject' (status stays Submitted); Reject with 'Fix the stand-up category' gives 'Status: Rejected', 'Manager comment: Fix the stand-up category' and history 'Rejected by Manager: Fix the stand-up category'; Employee can edit and resubmit if 0 violations.", "verification": ["page tests: empty comment, comment, edit, resubmit"], "passes": false },
+    { "id": "T3-AC8", "ticket": 3, "priority": 3, "description": "Approved week locked: no edit/delete/add/Reset controls; those POSTs refused with HTTP 409 'Week is locked'; Submitted week refuses them with 409 'Week is awaiting approval'; storage unchanged in both cases.", "verification": ["POST tests asserting 409, message and unchanged storage", "page test: no controls"], "passes": false },
+    { "id": "T3-AC9", "ticket": 3, "priority": 3, "description": "Server enforces roles: Manager POST submit -> 403 'Action not allowed for role Manager'; Employee POST approve/reject -> 403 'Action not allowed for role Employee'; approve a Draft week -> 409 'Invalid transition: Draft to Approved'; status unchanged on refusal.", "verification": ["POST tests asserting status code, message, unchanged status"], "passes": false },
+    { "id": "T3-AC10", "ticket": 3, "priority": 3, "description": "State machine is a pure domain class with unit tests for every valid and invalid transition; one page test runs week 1: edits, submit, reject with comment, submit again, approve, locked.", "verification": ["domain unit tests (no web)", "end-to-end page test"], "passes": false },
+    { "id": "T4-AC1", "ticket": 4, "priority": 4, "description": "Every post form on every page carries the antiforgery token; a POST without a valid token is refused with HTTP 400.", "verification": ["test lists pages and checks each form", "POST without token -> 400"], "passes": false },
+    { "id": "T4-AC2", "ticket": 4, "priority": 4, "description": "User text is HTML-encoded: manager comment <script>alert(1)</script> shown literally, page source has no raw script tag.", "verification": ["page test on the rejected-week page"], "passes": false },
+    { "id": "T4-AC3", "ticket": 4, "priority": 4, "description": "No stack traces: unknown URL -> 404 'Page not found'; /?week=abc, /?week= and a 5000-char week -> 200 'Week not found'; unhandled exception -> 500 'Something went wrong' without detail.", "verification": ["page tests for each URL", "test with a throwing endpoint or middleware"], "passes": false },
+    { "id": "T4-AC4", "ticket": 4, "priority": 4, "description": "Every response has X-Content-Type-Options: nosniff, X-Frame-Options: DENY and Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'. No inline script, CDN, external font or image.", "verification": ["page test asserts the 3 headers on several URLs", "grep views for external URLs and inline script"], "passes": false },
+    { "id": "T4-AC5", "ticket": 4, "priority": 4, "description": "No outbound call and no secret: no HttpClient, WebClient, WebRequest, Socket, password, token or API key in src/; no http:// or https:// URL in views, CSS, scripts except the SVG namespace.", "verification": ["grep over src/"], "passes": false },
+    { "id": "T4-AC6", "ticket": 4, "priority": 4, "description": "All SQL through EF Core with parameters: no FromSqlRaw, ExecuteSqlRaw, ExecuteSqlInterpolated or SQL built by concatenation/interpolation in src/.", "verification": ["grep over src/"], "passes": false },
+    { "id": "T4-AC7", "ticket": 4, "priority": 4, "description": "Input data never modified: after a full dotnet test, git status --porcelain -- data is empty.", "verification": ["run dotnet test, then git status --porcelain -- data"], "passes": false },
+    { "id": "T4-AC8", "ticket": 4, "priority": 4, "description": "Every page has <html lang=\"en\">, a non-empty <title>, a viewport meta tag, and a label for every form field.", "verification": ["page test over all pages"], "passes": false },
+    { "id": "T4-AC9", "ticket": 4, "priority": 4, "description": "Honest tests: dotnet test passes; no Skip, [Ignore] or empty test method in tests/.", "verification": ["dotnet test", "grep over tests/"], "passes": false },
+    { "id": "T5-AC1", "ticket": 5, "priority": 5, "description": "Week page shows 'Export CSV' (link to GET /Export?week=<start>) only when status is Approved.", "verification": ["page tests for Draft/Submitted/Rejected/Approved"], "passes": false },
+    { "id": "T5-AC2", "ticket": 5, "priority": 5, "description": "GET /Export on a non-approved week -> 409 'Week is not approved'; unknown week -> 404 'Week not found'; never a 500.", "verification": ["page tests"], "passes": false },
+    { "id": "T5-AC3", "ticket": 5, "priority": 5, "description": "Approved week 1 (T2-AC5 scenario, submitted, approved): GET /Export?week=2026-11-16 -> 200, Content-Type text/csv, Content-Disposition file name chronos-2026-11-16.csv.", "verification": ["page test asserting headers"], "passes": false },
+    { "id": "T5-AC4", "ticket": 5, "priority": 5, "description": "File has exactly header 'Date,Start,End,Hours,Category,WorkItemId,Description' and 27 sorted data rows, no ABSENCE row; includes the 7 example rows of the ticket (edited M5 and edited 2026-11-20 entry included).", "verification": ["page test: header, row count, each example row"], "passes": false },
+    { "id": "T5-AC5", "ticket": 5, "priority": 5, "description": "CSV reflects saved entries: an added entry appears with 'Manual entry', a deleted entry does not appear.", "verification": ["integration test"], "passes": false },
+    { "id": "T5-AC6", "ticket": 5, "priority": 5, "description": "Escaping: title Review, \"final\" -> \"Review, \"\"final\"\"\"; title =1+1 -> '=1+1.", "verification": ["domain unit tests"], "passes": false },
+    { "id": "T5-AC7", "ticket": 5, "priority": 5, "description": "CSV generation is a pure domain class with unit tests (format, 2-digit decimal hours, excluded absences, sort order, escaping); page tests cover button, 409, 404, headers, rows.", "verification": ["domain unit tests (no web)", "page tests"], "passes": false },
+    { "id": "T5-AC8", "ticket": 5, "priority": 5, "description": "Export is built in memory: no file written on disk, data/ unchanged.", "verification": ["test: no new file after export", "git status --porcelain -- data"], "passes": false },
+    { "id": "T6-AC1", "ticket": 6, "priority": 6, "description": "Week 1: M1 'Daily stand-up' MGMT -> ADMIN saved; 'Remembered corrections' panel shows 'Daily stand-up: ADMIN' on every week page and after restart.", "verification": ["integration test + restart test"], "passes": false },
+    { "id": "T6-AC2", "ticket": 6, "priority": 6, "description": "Week 2 proposal (no saved changes): M12, M14, M16, M19 are ADMIN with label 'Suggested from your correction'; M13, M17, M18 stay MGMT; KPIs ADMIN 1:30, MGMT 2:45, meeting time 8:15, violations 3.", "verification": ["page test asserting entries, label and KPIs"], "passes": false },
+    { "id": "T6-AC3", "ticket": 6, "priority": 6, "description": "Week 1 (has saved changes): M3, M6, M7, M9 stay MGMT; after 'Reset to proposal' M1, M3, M6, M7, M9 are ADMIN with the label.", "verification": ["integration test before and after reset"], "passes": false },
+    { "id": "T6-AC4", "ticket": 6, "priority": 6, "description": "Latest correction wins: changing a stand-up back to MGMT replaces the rule ('Daily stand-up: MGMT'); one line per title.", "verification": ["integration test"], "passes": false },
+    { "id": "T6-AC5", "ticket": 6, "priority": 6, "description": "'Forget' button (POST, antiforgery) removes a remembered correction; week 2 proposal returns to the Ticket 1 reference.", "verification": ["page test"], "passes": false },
+    { "id": "T6-AC6", "ticket": 6, "priority": 6, "description": "Nothing remembered for: M8 training changed to MGMT (violation 'Training must use code 5843: M8 on 2026-11-19' remains), time-only change, PROJ entry edit, added entry, invalid edit.", "verification": ["5 negative tests asserting no rule is stored"], "passes": false },
+    { "id": "T6-AC7", "ticket": 6, "priority": 6, "description": "Rules applied by a pure domain class with unit tests (title matching, one rule per title, what creates a rule); one page test runs the week 1 to week 2 scenario.", "verification": ["domain unit tests (no web)", "page test"], "passes": false },
+    { "id": "T7-AC1", "ticket": 7, "priority": 7, "description": "GET /Upload returns 200 with a .json file input, an 'Upload' button and the antiforgery token; home page has a link to /Upload.", "verification": ["page test"], "passes": false },
+    { "id": "T7-AC2", "ticket": 7, "priority": 7, "description": "Uploading week1.json redirects to GET /Calendar?week=2026-11-16 (200); same for week2.json; the uploaded week survives restart and is listed in the selector of GET /.", "verification": ["upload tests + restart test"], "passes": false },
+    { "id": "T7-AC3", "ticket": 7, "priority": 7, "description": "Uploading a copy of week1.json with week.start 2026-12-07 lists that week in the selector; GET /?week=2026-12-07 shows its proposal, KPIs and violations.", "verification": ["page test"], "passes": false },
+    { "id": "T7-AC4", "ticket": 7, "priority": 7, "description": "Uploading a Submitted or Approved week refused with 'Week is locked: cannot replace its data', nothing changes; a Draft week with saved changes is replaced and its changes deleted.", "verification": ["page tests for Submitted, Approved, Draft"], "passes": false },
+    { "id": "T7-AC5", "ticket": 7, "priority": 7, "description": "GET /Calendar?week=<start> shows employee name, team, week dates, one column per day in date order with the date as heading; default is the first week of the selector; ?week=2020-01-06 shows 'Week not found' (200).", "verification": ["page tests"], "passes": false },
+    { "id": "T7-AC6", "ticket": 7, "priority": 7, "description": "Meetings in their day column with id, title, start-end (e.g. 'M2 Sprint planning 13:30–15:00') in time order; week 1 has 11; cancelled meeting shows 'Cancelled' (week 2 M21).", "verification": ["page tests for both weeks"], "passes": false },
+    { "id": "T7-AC7", "ticket": 7, "priority": 7, "description": "Absences shown with type and hours (week 1 'Sick 4h' on 2026-11-18; week 2 'Vacation' on 2026-11-27); commits shown with time, sha, message (week 1: 7).", "verification": ["page tests"], "passes": false },
+    { "id": "T7-AC8", "ticket": 7, "priority": 7, "description": "Overlapping meetings flagged 'Overlap': M4/M5 on 2026-11-17, M17/M18 on 2026-11-25; meetings that only touch are not flagged.", "verification": ["page tests + unit test for touching meetings"], "passes": false },
+    { "id": "T7-AC9", "ticket": 7, "priority": 7, "description": "Invalid uploads refused with HTTP 200 and message, stored data unchanged: no file 'Please choose a JSON file'; 'not json' -> 'Invalid JSON file'; {} -> 'Missing section: employee'; bad dates -> 'Invalid week dates'; over 1 MB -> 'File too large (max 1 MB)'.", "verification": ["one page test per message, asserting stored data unchanged"], "passes": false },
+    { "id": "T7-AC10", "ticket": 7, "priority": 7, "description": "Uploaded text is HTML-encoded: meeting titled <script>alert(1)</script> shown literally, no raw script tag in the page source.", "verification": ["page test"], "passes": false }
+  ]
+}
