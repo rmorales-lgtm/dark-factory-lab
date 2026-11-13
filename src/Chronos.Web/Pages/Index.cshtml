@@ -41,6 +41,7 @@ else
         <div class="main-col">
             <section id="violations" class="panel" hidden aria-label="Violations"></section>
 
+            @{ var rowNo = 0; }
             @foreach (var day in Model.Days)
             {
                 <section class="day" aria-labelledby="day-@day.Key.ToString("yyyy-MM-dd")">
@@ -57,11 +58,20 @@ else
                                     <th scope="col">Duration</th>
                                     <th scope="col">Source</th>
                                     <th scope="col">Category</th>
+                                    @if (Model.CanEdit)
+                                    {
+                                        <th scope="col">Change</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var e in day)
                                 {
+                                    var n = ++rowNo;
+                                    var form = IndexModel.EditForm(e.Key);
+                                    var eStart = Model.Error(form, "Start");
+                                    var eEnd = Model.Error(form, "End");
+                                    var eCat = Model.Error(form, "Category");
                                     <tr class="entry" data-key="@e.Key">
                                         <td>@e.Start.ToString("HH:mm", inv)</td>
                                         <td>@e.End.ToString("HH:mm", inv)</td>
@@ -86,11 +96,89 @@ else
                                                 <span class="cat cat-@e.Category.ToLowerInvariant()">@e.Category</span>
                                             }
                                         </td>
+                                        @if (Model.CanEdit)
+                                        {
+                                            <td>
+                                                <details class="edit" open="@Model.HasErrors(form)">
+                                                    <summary>Edit</summary>
+                                                    <form method="post" asp-page-handler="Edit" class="edit-form">
+                                                        <input type="hidden" name="week" value="@Model.SelectedWeek" />
+                                                        <input type="hidden" name="key" value="@e.Key" />
+                                                        <div class="field">
+                                                            <label for="es-@n">Start</label>
+                                                            <input id="es-@n" name="start" type="time" required value="@Model.Value(form, "Start", e.Start.ToString("HH:mm", inv))" aria-invalid="@(eStart is not null ? "true" : null)" aria-describedby="@(eStart is not null ? $"es-err-{n}" : null)" />
+                                                            @if (eStart is not null) { <span class="field-error" id="es-err-@n">@eStart</span> }
+                                                        </div>
+                                                        <div class="field">
+                                                            <label for="ee-@n">End</label>
+                                                            <input id="ee-@n" name="end" type="time" required value="@Model.Value(form, "End", e.End.ToString("HH:mm", inv))" aria-invalid="@(eEnd is not null ? "true" : null)" aria-describedby="@(eEnd is not null ? $"ee-err-{n}" : null)" />
+                                                            @if (eEnd is not null) { <span class="field-error" id="ee-err-@n">@eEnd</span> }
+                                                        </div>
+                                                        <div class="field">
+                                                            <label for="ec-@n">Category</label>
+                                                            <input id="ec-@n" name="category" type="text" list="categories" autocomplete="off" value="@Model.Value(form, "Category", e.Category ?? "")" aria-invalid="@(eCat is not null ? "true" : null)" aria-describedby="@(eCat is not null ? $"ec-err-{n}" : null)" />
+                                                            @if (eCat is not null) { <span class="field-error" id="ec-err-@n">@eCat</span> }
+                                                        </div>
+                                                        <button type="submit" class="btn">Save</button>
+                                                    </form>
+                                                    <form method="post" asp-page-handler="Delete" class="delete-form">
+                                                        <input type="hidden" name="week" value="@Model.SelectedWeek" />
+                                                        <input type="hidden" name="key" value="@e.Key" />
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </details>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
+                </section>
+            }
+
+            @if (Model.CanEdit)
+            {
+                var aDate = Model.Error(IndexModel.AddForm, "Date");
+                var aStart = Model.Error(IndexModel.AddForm, "Start");
+                var aEnd = Model.Error(IndexModel.AddForm, "End");
+                var aCat = Model.Error(IndexModel.AddForm, "Category");
+                <section class="panel" aria-labelledby="add-h">
+                    <h2 id="add-h">Add entry</h2>
+                    <form method="post" asp-page-handler="Add" class="edit-form add-form">
+                        <input type="hidden" name="week" value="@Model.SelectedWeek" />
+                        <div class="field">
+                            <label for="a-date">Date</label>
+                            <input id="a-date" name="date" type="date" required value="@Model.Value(IndexModel.AddForm, "Date", week.Week.Start)" aria-invalid="@(aDate is not null ? "true" : null)" aria-describedby="@(aDate is not null ? "a-date-err" : null)" />
+                            @if (aDate is not null) { <span class="field-error" id="a-date-err">@aDate</span> }
+                        </div>
+                        <div class="field">
+                            <label for="a-start">Start</label>
+                            <input id="a-start" name="start" type="time" required value="@Model.Value(IndexModel.AddForm, "Start", "")" aria-invalid="@(aStart is not null ? "true" : null)" aria-describedby="@(aStart is not null ? "a-start-err" : null)" />
+                            @if (aStart is not null) { <span class="field-error" id="a-start-err">@aStart</span> }
+                        </div>
+                        <div class="field">
+                            <label for="a-end">End</label>
+                            <input id="a-end" name="end" type="time" required value="@Model.Value(IndexModel.AddForm, "End", "")" aria-invalid="@(aEnd is not null ? "true" : null)" aria-describedby="@(aEnd is not null ? "a-end-err" : null)" />
+                            @if (aEnd is not null) { <span class="field-error" id="a-end-err">@aEnd</span> }
+                        </div>
+                        <div class="field">
+                            <label for="a-cat">Category</label>
+                            <input id="a-cat" name="category" type="text" list="categories" autocomplete="off" value="@Model.Value(IndexModel.AddForm, "Category", "")" aria-invalid="@(aCat is not null ? "true" : null)" aria-describedby="@(aCat is not null ? "a-cat-err" : null)" />
+                            @if (aCat is not null) { <span class="field-error" id="a-cat-err">@aCat</span> }
+                        </div>
+                        <button type="submit" class="btn">Add entry</button>
+                    </form>
+                    <datalist id="categories">
+                        @foreach (var c in EntryInputValidator.ValidCategories)
+                        {
+                            <option value="@c"></option>
+                        }
+                    </datalist>
+                    <form method="post" asp-page-handler="Reset" class="reset-form">
+                        <input type="hidden" name="week" value="@Model.SelectedWeek" />
+                        <button type="submit" class="btn btn-quiet">Reset to proposal</button>
+                    </form>
                 </section>
             }
         </div>

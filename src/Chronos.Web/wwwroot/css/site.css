@@ -186,3 +186,18 @@ th { font-size: 0.85rem; color: var(--muted); border-top: 0; font-weight: 600; }
 }
 .state-merged { color: #14602b; }
 .state-open { color: #8a4b00; }
+
+.edit summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.edit-form { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: flex-start; margin-top: 0.5rem; }
+.delete-form { margin-top: 0.5rem; }
+.reset-form { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: 0.75rem; }
+.field { display: flex; flex-direction: column; gap: 0.15rem; min-width: 7rem; }
+.field label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.field input { font: inherit; padding: 0.3rem 0.5rem; border: 1px solid var(--muted); border-radius: 4px; background: var(--surface); color: var(--ink); }
+.field input[aria-invalid="true"] { border-color: #9b1c1c; border-width: 2px; }
+.field-error { color: #9b1c1c; font-size: 0.85rem; font-weight: 600; max-width: 14rem; }
+.edit-form .btn { align-self: flex-end; }
+
+.btn { font: inherit; padding: 0.35rem 0.8rem; border: 1px solid var(--brand); border-radius: 4px; background: var(--brand); color: #fff; cursor: pointer; }
+.btn-danger { background: var(--surface); color: #9b1c1c; border-color: #9b1c1c; }
+.btn-quiet { background: var(--surface); color: var(--brand); }

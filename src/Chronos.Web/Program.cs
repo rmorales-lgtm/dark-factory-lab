@@ -24,6 +24,8 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddSingleton<Chronos.Web.Domain.IWeekDataSource>(sp =>
     new Chronos.Web.Domain.FileWeekDataSource(sp.GetRequiredService<ChronosPaths>()));
 
+builder.Services.AddScoped<Chronos.Web.Services.WeekService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

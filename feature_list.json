@@ -50,13 +50,13 @@
       "id": "T2-AC1", "ticket": 2, "priority": 2,
       "description": "Employee can edit (start, end, category), delete and add an entry. Saved in SQLite for that week only, persists after reload. 'Reset to proposal' deletes the week's saved changes and shows the proposal again.",
       "verification": ["integration test: edit, reload, still there; other week untouched", "reset test restores proposal"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC2", "ticket": 2, "priority": 2,
       "description": "Invalid input refused with a message next to the field and nothing saved: end at/before start, date outside the week, unknown category.",
       "verification": ["3 negative tests, each asserts message in HTML and no change stored"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "T2-AC3", "ticket": 2, "priority": 2,
